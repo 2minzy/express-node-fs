@@ -3,6 +3,7 @@ const upload = require('../middlewares/upload-photo');
 const fs = require('fs');
 const path = require('path');
 const uuid = require('uuid');
+const projects = require('../data/projects.json');
 
 // @desc    get all projects
 // @route   GET /api/projects
@@ -17,7 +18,7 @@ router.get('/projects', function(req, res) {
 // @access  Private/Admin
 router.get('/projects/:id', function(req, res) {
   let data = '[]';
-  const id = req.params.id || 0;
+  const id = parseInt(req.params.id || 0);
 
   try {
     data = fs.readFileSync(
@@ -29,10 +30,31 @@ router.get('/projects/:id', function(req, res) {
   }
 
   const projects = JSON.parse(data);
-  const project = projects.filter(p => p.id === id);
-
+  const project = projects.filter(project => project.id === id);
   res.json(project);
 });
+
+// @description    Update a product
+// @route          PUT /api/products/:id
+// @access         Private/Admin
+
+// router.put('/products/:id', function(req, res) {
+//   let data = '[]';
+//   const id = parseInt(req.params.id || 0);
+
+//   try {
+//     data = fs.readFileSync(
+//       path.resolve(__dirname, '../data/projects.json'),
+//       'utf-8'
+//     );
+//   } catch (e) {
+//     console.log(e);
+//   }
+
+//   const projects = JSON.parse(data);
+//   const project = projects.filter(project => project.id === id);
+//   console.log(project);
+// })
 
 // @desc    create a project
 // @route   POST /api/upload

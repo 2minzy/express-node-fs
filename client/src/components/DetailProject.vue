@@ -45,6 +45,7 @@ export default {
 
     onMounted(() => {
       fetchData();
+
     });
 
     return {
