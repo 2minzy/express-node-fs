@@ -5,9 +5,13 @@
         <label for="name">브랜드 이름</label>
         <input type="text" name="name" required v-model="project.brandName" />
       </div>
-        <div>
+      <div>
         <label for="name">프로젝트 종류</label>
         <input type="text" name="name" required v-model="project.projectType" />
+      </div>
+      <div>
+        <label for="name">옵션</label>
+        <input type="text" name="name" required v-model="kv.option" />
       </div>
       <!-- <div>
         <label for="year">개봉 년도</label>
@@ -64,6 +68,10 @@ export default {
       projectTumbnail: null,
       projectLogo: null,
     });
+
+    const kv = reactive({
+      option: 1
+    })
     const data = ref({})
 
     const onFileSelected = (e) => {
@@ -75,8 +83,9 @@ export default {
     const onSubmit = async () => {
       try {
         let data = new Object;
-        data.global = project;
-
+        data.common = project;
+        let newData = new Object;
+      
         // data.modules = new Array;
        
         // let formData = new FormData();
@@ -85,6 +94,7 @@ export default {
         // modules.push(formData)
 
         await axios.post('http://localhost:3000/api/upload', data);
+        await axios.put('http://localhost:3000/api/upload', newData)
         alert('업로드 성공!');
       } catch (e) {
         console.log(e);
@@ -96,7 +106,8 @@ export default {
       project,
       data,
       onFileSelected,
-      onSubmit
+      onSubmit,
+      kv
     }
   },
 };

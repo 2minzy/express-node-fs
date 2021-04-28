@@ -29,7 +29,6 @@ router.get('/projects/:id', function(req, res) {
     console.log(e);
   }
 
-  const projects = JSON.parse(data);
   const project = projects.filter(project => project.id === id);
   res.json(project);
 });
@@ -38,23 +37,29 @@ router.get('/projects/:id', function(req, res) {
 // @route          PUT /api/products/:id
 // @access         Private/Admin
 
-// router.put('/products/:id', function(req, res) {
-//   let data = '[]';
-//   const id = parseInt(req.params.id || 0);
+router.put('/products/:id', function(req, res) {
+  let newData = req.body;
+  let data = '[]';
+  const id = parseInt(req.params.id || 0);
 
-//   try {
-//     data = fs.readFileSync(
-//       path.resolve(__dirname, '../data/projects.json'),
-//       'utf-8'
-//     );
-//   } catch (e) {
-//     console.log(e);
-//   }
+  try {
+    data = fs.readFileSync(
+      path.resolve(__dirname, '../data/projects.json'),
+      'utf-8'
+    );
+  } catch (e) {
+    console.log(e);
+  }
 
-//   const projects = JSON.parse(data);
-//   const project = projects.filter(project => project.id === id);
-//   console.log(project);
-// })
+  const projects = JSON.parse(data);
+
+  for (let i = 0; i < projects.length; i++) {
+    if (id === projects[i].id) {
+      projects[i].modules = [];
+      projects[i].modules.push(newData);
+    }
+  }
+})
 
 // @desc    create a project
 // @route   POST /api/upload
@@ -85,6 +90,43 @@ router.post('/upload', function(req, res) {
       });
     });
   });
+});
+
+// Test Create Project
+router.post('/test', function(req, res) {
+  const project = req.body;
+  const fileName = project.fileName;
+
+  const dir = `../work/${fileName}`;
+
+  !fs.existsSync(dir) && fs.mkdirSync(dir);
+
+  // const myPath = path.join(__dirname, '..', 'work', `${fileName}`, `${fileName}.json`);
+  const myPath = `../work/${fileName}/${fileName}.json`;
+
+  fs.writeFile(myPath, JSON.stringify(project), err => {
+    if (err) throw err;
+    console.log('Successfully updated!');
+    res.json({
+      success: true,
+      project,
+    });
+  });
+})
+
+// Test get all project
+// router.get('/test', function(req, res) {
+//   res.header('Content-Type', 'application/json');
+//   res.sendFile(path.resolve(__dirname, '../data/projects.json'));
+
+// });
+
+// Test a single project
+router.get('/test/:id', function(req, res) {
+  const id = req.params.id || '';
+
+  res.header('Content-Type', 'application/json');
+  res.sendFile(path.resolve(__dirname, `../data/${id}.json`));
 });
 
 module.exports = router;
